@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A safe, interactive browser demo of DrumAI's drum-chart output.">
+  <meta name="theme-color" content="#0a0d12">
+  <title>DrumAI — Interactive transcription demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#demo">Skip to demo</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="DrumAI home"><span>DRUM</span><strong>AI</strong></a>
+    <nav aria-label="Primary"><a href="#demo">Demo</a><a href="#case-study">Case study</a><a href="https://github.com/Caio-Felice-Cunha/drumai-demo">GitHub</a></nav>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div>
+        <p class="kicker">Interactive demo · no upload · no API</p>
+        <h1>Hear the chart.<br><em>Edit the groove.</em></h1>
+        <p class="lede">DrumAI turns audio into playable notation. This public demo lets you inspect the output safely while the CPU transcription pipeline stays private.</p>
+        <div class="hero-actions"><a class="button primary" href="#demo">Try the player</a><a class="button ghost" href="#case-study">How it works</a></div>
+      </div>
+      <div class="signal" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    </section>
+
+    <section id="demo" class="demo-shell" aria-labelledby="demo-title">
+      <div class="demo-head"><div><p class="kicker">Original 4-bar fixture</p><h2 id="demo-title">Notation player</h2></div><span class="safe-badge">Runs entirely in this tab</span></div>
+      <div class="transport" aria-label="Player controls">
+        <button id="play" class="transport-primary" type="button" aria-pressed="false">▶ Play</button>
+        <button id="stop" type="button">■ Stop</button>
+        <label>Tempo <input id="tempo" type="range" min="60" max="160" value="96"><output id="tempo-output" for="tempo">96 BPM</output></label>
+        <label class="check"><input id="metronome" type="checkbox"> Metronome</label>
+        <label class="check"><input id="loop" type="checkbox"> Loop</label>
+      </div>
+      <div class="arrangement-row">
+        <label for="arrangement">Arrangement</label>
+        <select id="arrangement"><option value="original">Original groove</option><option value="half-time">Half-time pocket</option><option value="open-hat">Open-hat lift</option></select>
+        <p id="player-status" role="status" aria-live="polite">Ready — edit a step or press play</p>
+      </div>
+      <div class="chart-scroll"><div id="notation-grid" class="notation-grid" aria-label="Editable drum notation"></div></div>
+      <div class="demo-actions"><button id="reset" type="button">Reset chart</button><button id="export" class="export" type="button">Export arrangement ↓</button></div>
+    </section>
+
+    <section id="case-study" class="case-study">
+      <div><p class="kicker">Private pipeline, public evidence</p><h2>Seven stages from waveform to a chart you can practice.</h2></div>
+      <ol class="pipeline"><li><span>01</span>Preprocess</li><li><span>02</span>Separate</li><li><span>03</span>Detect</li><li><span>04</span>Quantize</li><li><span>05</span>Arrange</li><li><span>06</span>Notate</li><li><span>07</span>Export</li></ol>
+      <div class="facts"><article><strong>CPU only</strong><p>No GPU or paid inference API in the working local product.</p></article><article><strong>~75–90 sec</strong><p>Typical observed processing time per song on the development machine.</p></article><article><strong>Safe by design</strong><p>This demo contains synthesized sound and no commercial recording.</p></article></div>
+      <p class="fine-print">The browser experience is a deterministic demonstration of the output layer, not a claim that the transcription model runs on this page.</p>
+    </section>
+  </main>
+  <footer><span>DrumAI demo · © 2026 Caio Di Felice Cunha</span><a href="https://github.com/Caio-Felice-Cunha/drumai-demo">Source and limitations</a></footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
