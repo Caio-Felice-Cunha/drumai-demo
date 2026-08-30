@@ -7,12 +7,13 @@
   <meta name="theme-color" content="#0a0d12">
   <title>DrumAI — Interactive transcription demo</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="case.css">
 </head>
 <body>
   <a class="skip-link" href="#demo">Skip to demo</a>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="DrumAI home"><span>DRUM</span><strong>AI</strong></a>
-    <nav aria-label="Primary"><a href="#demo">Demo</a><a href="#case-study">Case study</a><a href="https://github.com/Caio-Felice-Cunha/drumai-demo">GitHub</a></nav>
+    <nav aria-label="Primary"><a href="#demo">Demo</a><a href="#case-study">Engineering</a><a href="#code">Code</a><a href="https://github.com/Caio-Felice-Cunha/drumai-demo">Source</a></nav>
   </header>
   <main id="top">
     <section class="hero">
@@ -20,7 +21,7 @@
         <p class="kicker">Interactive demo · no upload · no API</p>
         <h1>Hear the chart.<br><em>Edit the groove.</em></h1>
         <p class="lede">DrumAI turns audio into playable notation. This public demo lets you inspect the output safely while the CPU transcription pipeline stays private.</p>
-        <div class="hero-actions"><a class="button primary" href="#demo">Try the player</a><a class="button ghost" href="#case-study">How it works</a></div>
+        <div class="hero-actions"><a class="button primary" href="#demo">Try the demo</a><a class="button ghost" href="#case-study">Engineering case</a><a class="button ghost" href="https://github.com/Caio-Felice-Cunha/drumai-demo">View source</a></div>
       </div>
       <div class="signal" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     </section>
@@ -46,9 +47,28 @@
     <section id="case-study" class="case-study">
       <div><p class="kicker">Private pipeline, public evidence</p><h2>Seven stages from waveform to a chart you can practice.</h2></div>
       <ol class="pipeline"><li><span>01</span>Preprocess</li><li><span>02</span>Separate</li><li><span>03</span>Detect</li><li><span>04</span>Quantize</li><li><span>05</span>Arrange</li><li><span>06</span>Notate</li><li><span>07</span>Export</li></ol>
-      <div class="facts"><article><strong>CPU only</strong><p>No GPU or paid inference API in the working local product.</p></article><article><strong>~75–90 sec</strong><p>Typical observed processing time per song on the development machine.</p></article><article><strong>Safe by design</strong><p>This demo contains synthesized sound and no commercial recording.</p></article></div>
+      <div class="facts"><article><strong>CPU only</strong><p>No GPU or paid inference API in the working local product.</p></article><article><strong>7-stage contract</strong><p>Each stage owns a typed input, observable output, and failure boundary.</p></article><article><strong>Safe by design</strong><p>This demo contains synthesized sound and no commercial recording.</p></article></div>
       <p class="fine-print">The browser experience is a deterministic demonstration of the output layer, not a claim that the transcription model runs on this page.</p>
     </section>
+    <section class="deep-case" aria-labelledby="contract-title"><div class="case-heading"><p class="kicker">Input / output contract</p><h2 id="contract-title">One artifact enters. Three practice-ready artifacts leave.</h2></div><div class="contract-grid"><article><span>INPUT</span><h3>Local audio path</h3><p>A user-owned file plus tempo and quantization options. The private CLI keeps audio on the machine.</p></article><article><span>OUTPUT 01</span><h3>Immutable score</h3><p>Measures, subdivisions, instruments, hits, confidence, and provenance form a versionable notation model.</p></article><article><span>OUTPUT 02</span><h3>Practice player</h3><p>The score drives a Web Audio scheduler, cursor, loop boundaries, metronome, and tempo-independent playback.</p></article><article><span>OUTPUT 03</span><h3>Portable exports</h3><p>The working product produces notation and MIDI; this public demo exports only its edited JSON fixture.</p></article></div></section>
+    <section class="deep-case" aria-labelledby="workflow-title"><div class="case-heading"><p class="kicker">Pipeline walkthrough</p><h2 id="workflow-title">Seven stages, seven places to observe or recover.</h2></div><ol class="workflow-list"><li><b>01 · Preprocess</b><p>Decode to a stable sample rate, normalize channels, and preserve source metadata.</p></li><li><b>02 · Separate</b><p>Isolate the percussion signal locally so harmonic content does not dominate detection.</p></li><li><b>03 · Detect</b><p>Infer kick, snare, and cymbal events with timestamps and confidence values.</p></li><li><b>04 · Quantize</b><p>Map continuous events to musical subdivisions while retaining timing evidence.</p></li><li><b>05 · Arrange</b><p>Group hits into measures and resolve conflicts without mutating previous stages.</p></li><li><b>06 · Notate</b><p>Translate the score model into an editable visual grid and player timeline.</p></li><li><b>07 · Export</b><p>Serialize practice artifacts and diagnostics with source/version provenance.</p></li></ol></section>
+    <section id="code" class="deep-case"><div class="case-heading"><p class="kicker">Logic and code</p><h2>The private boundary is visible without publishing private source.</h2></div><div class="code-cards"><article><header><span>PRIVATE PIPELINE · PSEUDOCODE</span></header><pre><code>audio = preprocess(user_owned_file)
+drums = separate(audio, local_cpu_model)
+events = detect(drums)
+score = quantize(events, tempo_grid)
+return export(arrange(score))</code></pre><p>This describes the contract only. It is not copied from the private implementation.</p></article><article><header><span>PUBLIC DEMO · REAL CODE</span><a href="https://github.com/Caio-Felice-Cunha/drumai-demo/blob/main/site/app.js">app.js ↗</a></header><pre><code>const stepMs = (60_000 / state.tempo) / 4;
+instruments.forEach((instrument) =&gt; {
+  if (state.pattern[instrument][step]) hit(instrument, now);
+});</code></pre><p>The browser scheduler derives sixteenth-note time from tempo and synthesizes only enabled fixture hits.</p></article><article><header><span>IMMUTABLE SCORE · REAL CODE</span><a href="https://github.com/Caio-Felice-Cunha/drumai-demo/blob/main/site/model.mjs">model.mjs ↗</a></header><pre><code>return {
+  ...pattern,
+  [instrument]: pattern[instrument].map(
+    (value, i) =&gt; i === step ? !value : value
+  )
+};</code></pre><p>An edit returns a new instrument row; the original fixture remains a stable reset and test oracle.</p></article></div></section>
+    <section class="deep-case"><div class="case-heading"><p class="kicker">Design decisions</p><h2>Playback is a view over the score, not a second source of truth.</h2></div><div class="decision-grid"><article><h3>Audio clock over animation clock</h3><p>Sounds are scheduled against `AudioContext.currentTime`; visual state follows the same step index.</p></article><article><h3>Gesture-gated audio</h3><p>The audio context is created only after Play, respecting browser policy and avoiding surprise sound.</p></article><article><h3>Immutable editing</h3><p>Arrangement presets and individual edits create new arrays, keeping reset and export deterministic.</p></article><article><h3>Privacy boundary</h3><p>No upload input, network request, model download, commercial recording, lyrics, or analytics exists here.</p></article></div></section>
+    <section class="deep-case quality-case"><div class="case-heading"><p class="kicker">Quality and limitations</p><h2>Tests prove the demo contract, not transcription accuracy.</h2></div><div class="quality-strip"><article><strong>0</strong><span>external runtime requests</span></article><article><strong>16</strong><span>editable subdivisions</span></article><article><strong>3</strong><span>arrangement modes</span></article><article><strong>1</strong><span>original synthetic fixture</span></article></div><ul><li>Node tests cover tempo clamping, immutable edits, arrangements, and export shape.</li><li>Playwright covers edit, play, stop, export, keyboard-visible controls, mobile, and console/network safety.</li><li>The demo does not infer drums, accept audio, measure model quality, or export MIDI.</li></ul><pre class="run-command"><code>npm install
+npm run serve
+npm run test:all</code></pre></section>
   </main>
   <footer><span>DrumAI demo · © 2026 Caio Di Felice Cunha</span><a href="https://github.com/Caio-Felice-Cunha/drumai-demo">Source and limitations</a></footer>
   <script type="module" src="app.js"></script>
