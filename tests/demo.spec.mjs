@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 test('visitor can edit and operate the demo without network calls', async ({ page }) => {
   const external = [];
@@ -40,4 +41,10 @@ test.describe('mobile and reduced motion', () => {
     expect(overflow).toBeLessThanOrEqual(1);
     expect(errors).toEqual([]);
   });
+});
+
+test('WCAG AA audit passes', async ({ page }) => {
+  await page.goto('/');
+  const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+  expect(violations).toEqual([]);
 });
